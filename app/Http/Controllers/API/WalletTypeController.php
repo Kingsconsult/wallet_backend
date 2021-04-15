@@ -76,7 +76,14 @@ class WalletTypeController extends Controller
      */
     public function update(Request $request, WalletType $walletType)
     {
-        //
+        $walletType->update($request->all());
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::CREATED,
+            "message" => "Wallet Type added successful",
+            "data" => $walletType
+        ],StatusCodes::CREATED);
     }
 
     /**
