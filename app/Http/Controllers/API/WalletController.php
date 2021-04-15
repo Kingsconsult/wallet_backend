@@ -4,7 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Collections\StatusCodes;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateWalletRequest;
+use App\Models\User;
 use App\Models\Wallet;
+use App\Models\WalletType;
 use Illuminate\Http\Request;
 
 class WalletController extends Controller
@@ -32,9 +35,30 @@ class WalletController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateWalletRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        $walletTypeId = $validatedData['wallet_type_id'];
+
+        $walletType = WalletType::find($walletTypeId);
+
+        if($validatedData['balance'] < $walletType->minimum_balance ){
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::BAD_REQUEST,
+                "message" => "Fund the wallet with at least " . $walletType->minimum_balance,
+            ],StatusCodes::BAD_REQUEST);
+        }
+
+        $wallet = Wallet::create($validatedData);
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::CREATED,
+            "message" => "Wallet created successful",
+            "wallet" => $wallet->load(['user', 'walletType']) 
+        ],StatusCodes::CREATED);
     }
 
     /**
@@ -45,7 +69,17 @@ class WalletController extends Controller
      */
     public function show(Wallet $wallet)
     {
-        //
+
+        $walletType = WalletType::find($wallet->wallet_type_id);
+
+        $user = User::find($wallet->user_id);
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "Wallet fetched successfully.",
+            "data" => $wallet->load(['user', 'walletType'])
+        ], StatusCodes::SUCCESS);
     }
 
     /**
