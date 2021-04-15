@@ -106,7 +106,7 @@ class UserController extends Controller
 
         return response()->json([
             "status" => "success",
-            "message" => "All Wallets fetched successfully.",
+            "message" => "Total users count gotten successfully.",
             "data" => [
                 "users count" => $usersCount
             ]
