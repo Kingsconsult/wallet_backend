@@ -66,8 +66,19 @@ class WalletController extends Controller
      * @param  \App\Models\Wallet  $wallet
      * @return \Illuminate\Http\Response
      */
-    public function show(Wallet $wallet)
+    public function show($id)
     {
+
+        $wallet = Wallet::find($id);
+
+        if(!isset($wallet)){
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::NOT_FOUND,
+                "message" => "Wallet not found",
+            ],StatusCodes::NOT_FOUND);
+        }
+
         return response()->json([
             "status" => "success",
             "status_code" => StatusCodes::SUCCESS,
@@ -85,7 +96,14 @@ class WalletController extends Controller
      */
     public function update(Request $request, Wallet $wallet)
     {
-        //
+        // $walletType->update($request->all());
+
+        // return response()->json([
+        //     "status" => "success",
+        //     "status_code" => StatusCodes::CREATED,
+        //     "message" => "Wallet Type updated successful",
+        //     "data" => $walletType
+        // ],StatusCodes::CREATED);
     }
 
     /**
@@ -94,8 +112,26 @@ class WalletController extends Controller
      * @param  \App\Models\Wallet  $wallet
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Wallet $wallet)
+    public function destroy($id)
     {
-        //
+
+        $wallet = Wallet::find($id);
+
+        if(!isset($wallet)){
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::NOT_FOUND,
+                "message" => "Wallet not found",
+            ],StatusCodes::NOT_FOUND);
+        }
+
+        $wallet->delete();
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "Wallet deleted successful",
+            "wallet" =>  $wallet->load(['user', 'walletType']) 
+        ],StatusCodes::SUCCESS);
     }
 }
