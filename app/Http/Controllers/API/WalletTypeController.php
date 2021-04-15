@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\WalletType;
 use Illuminate\Http\Request;
+use App\Collections\StatusCodes;
+
 
 class WalletTypeController extends Controller
 {
@@ -15,8 +17,18 @@ class WalletTypeController extends Controller
      */
     public function index()
     {
-        //
+        $walletTypes = WalletType::all();
+
+        return response()->json([
+            "status" => "success",
+            "message" => "All Wallet types fetched successfully.",
+            "data" => $walletTypes
+        ], StatusCodes::SUCCESS);
     }
+
+    // $table->string('wallet_type', 255);
+    // $table->double('interest_rate', 10, 2);
+    // $table->double('minimum_balance', 10, 2);
 
     /**
      * Store a newly created resource in storage.
