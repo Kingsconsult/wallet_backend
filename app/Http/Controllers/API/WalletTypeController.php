@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\WalletType;
 use Illuminate\Http\Request;
+use App\Collections\StatusCodes;
+use App\Http\Requests\CreateWalletTypeRequest;
 
 class WalletTypeController extends Controller
 {
@@ -15,8 +17,19 @@ class WalletTypeController extends Controller
      */
     public function index()
     {
-        //
+        $walletTypes = WalletType::all();
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "All Wallet types fetched successfully.",
+            "data" => $walletTypes
+        ], StatusCodes::SUCCESS);
     }
+
+    // $table->string('wallet_type', 255);
+    // $table->double('interest_rate', 10, 2);
+    // $table->double('minimum_balance', 10, 2);
 
     /**
      * Store a newly created resource in storage.
@@ -24,9 +37,18 @@ class WalletTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateWalletTypeRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        $walletType = WalletType::create($validatedData);
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::CREATED,
+            "message" => "Wallet Type added successful",
+            "data" => $walletType
+        ],StatusCodes::CREATED);
     }
 
     /**
@@ -37,7 +59,12 @@ class WalletTypeController extends Controller
      */
     public function show(WalletType $walletType)
     {
-        //
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "Wallet types fetched successfully.",
+            "data" => $walletType
+        ], StatusCodes::SUCCESS);
     }
 
     /**
@@ -49,7 +76,14 @@ class WalletTypeController extends Controller
      */
     public function update(Request $request, WalletType $walletType)
     {
-        //
+        $walletType->update($request->all());
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::CREATED,
+            "message" => "Wallet Type updated successful",
+            "data" => $walletType
+        ],StatusCodes::CREATED);
     }
 
     /**
@@ -60,6 +94,13 @@ class WalletTypeController extends Controller
      */
     public function destroy(WalletType $walletType)
     {
-        //
+        $walletType->delete();
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "Wallet Type deleted successful",
+            "data" => $walletType
+        ],StatusCodes::SUCCESS);
     }
 }
