@@ -21,6 +21,7 @@ class WalletTypeController extends Controller
 
         return response()->json([
             "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
             "message" => "All Wallet types fetched successfully.",
             "data" => $walletTypes
         ], StatusCodes::SUCCESS);
@@ -44,12 +45,10 @@ class WalletTypeController extends Controller
 
         return response()->json([
             "status" => "success",
-            "status_code" => StatusCodes::SUCCESS,
+            "status_code" => StatusCodes::CREATED,
             "message" => "Wallet Type added successful",
             "data" => $walletType
-        ],StatusCodes::SUCCESS);
-
-
+        ],StatusCodes::CREATED);
     }
 
     /**
@@ -60,7 +59,12 @@ class WalletTypeController extends Controller
      */
     public function show(WalletType $walletType)
     {
-        //
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "Wallet types fetched successfully.",
+            "data" => $walletType
+        ], StatusCodes::SUCCESS);
     }
 
     /**
