@@ -25,7 +25,6 @@ class CreateWalletRequest extends FormRequest
     {
         return [
             'wallet_type_id' => 'required|integer',
-            'user_id' => 'required|integer',
             'balance' => 'required|integer'
         ];
     }

@@ -14,6 +14,7 @@ class Transaction extends Model
         'transaction_type', 
         'debit_wallet_id',
         'credit_wallet_id', 
+        'user_id'
     ];
 
     
