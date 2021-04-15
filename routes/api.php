@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::prefix('wallets')->group(function () {
         Route::get('counts', [WalletController::class, 'counts']);
         Route::get('balance/{id}', [WalletController::class, 'walletBalance']);
+        Route::post('fund-wallet/{id}', [WalletController::class, 'fundWallet']);
     });
 
 
