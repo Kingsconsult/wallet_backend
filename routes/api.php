@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\WalletController;
 use App\Http\Controllers\API\WalletTypeController;
@@ -33,8 +34,15 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('user/{id}', [UserController::class, 'user']);
     Route::get('count-users', [UserController::class, 'countUsers']);
 
+    Route::prefix('wallets')->group(function () {
+        Route::get('counts', [WalletController::class, 'counts']);
+        Route::get('balance/{id}', [WalletController::class, 'walletBalance']);
+    });
+
+
+
     Route::apiResource('wallet-types', WalletTypeController::class);
     Route::apiResource('wallets', WalletController::class);
-    Route::apiResource('transactions', WalletController::class);
+    Route::apiResource('transactions', TransactionController::class);
     // Route::apiResource('transactions', WalletController::class);
 });

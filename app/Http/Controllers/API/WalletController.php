@@ -149,4 +149,41 @@ class WalletController extends Controller
             "wallet" =>  $wallet->load(['user', 'walletType']) 
         ],StatusCodes::SUCCESS);
     }
+
+    public function counts()
+    {
+        $walletsCount = Wallet::count();
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "Total no of wallets gotten successfully.",
+            "data" => [
+                "users count" => $walletsCount
+            ]
+        ], StatusCodes::SUCCESS);
+    }
+
+    public function walletBalance($id)
+    {
+        $wallet = Wallet::find($id);
+
+        if(!isset($wallet)){
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::NOT_FOUND,
+                "message" => "Wallet not found",
+            ],StatusCodes::NOT_FOUND);
+        }
+
+        
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "Get Wallet balance successfully.",
+            "data" => [
+                "balance" => $wallet->balance
+            ] 
+        ], StatusCodes::SUCCESS);
+    }
 }
