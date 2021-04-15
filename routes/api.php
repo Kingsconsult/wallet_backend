@@ -25,6 +25,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('register', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login']);
 
+Route::get('all-users', [AuthController::class, 'allUsers'])->middleware('auth:api');
+Route::get('user/{id}', [AuthController::class, 'user'])->middleware('auth:api');
 
 Route::apiResource('wallet-types', WalletTypeController::class)->middleware('auth:api');
 Route::apiResource('wallets', WalletController::class)->middleware('auth:api');
