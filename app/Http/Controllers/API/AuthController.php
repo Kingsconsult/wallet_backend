@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Collections\StatusCodes;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Models\Wallet;
 
 class AuthController extends Controller
 {
