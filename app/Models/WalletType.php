@@ -14,4 +14,10 @@ class WalletType extends Model
         'interest_rate',
         'minimum_balance'
     ];
+
+
+    public function wallet()
+    {
+        return $this->hasMany(wallet::class);
+    }
 }
