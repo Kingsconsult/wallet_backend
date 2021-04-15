@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\WalletType;
 use Illuminate\Http\Request;
 use App\Collections\StatusCodes;
-
+use App\Http\Requests\CreateWalletTypeRequest;
 
 class WalletTypeController extends Controller
 {
@@ -36,9 +36,20 @@ class WalletTypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateWalletTypeRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+
+        $walletType = WalletType::create($validatedData);
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "Wallet Type added successful",
+            "data" => $walletType
+        ],StatusCodes::SUCCESS);
+
+
     }
 
     /**
