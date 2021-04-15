@@ -68,11 +68,6 @@ class WalletController extends Controller
      */
     public function show(Wallet $wallet)
     {
-
-        $walletType = WalletType::find($wallet->wallet_type_id);
-
-        $user = User::find($wallet->user_id);
-
         return response()->json([
             "status" => "success",
             "status_code" => StatusCodes::SUCCESS,

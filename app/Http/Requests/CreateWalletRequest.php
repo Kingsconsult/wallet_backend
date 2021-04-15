@@ -13,7 +13,7 @@ class CreateWalletRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,8 +24,9 @@ class CreateWalletRequest extends FormRequest
     public function rules()
     {
         return [
-            'wallet_type_id' => 'email|required',
-            'user_id' => 'email|required' 
+            'wallet_type_id' => 'required|integer',
+            'user_id' => 'required|integer',
+            'balance' => 'required|integer'
         ];
     }
 }
