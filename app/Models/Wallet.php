@@ -12,6 +12,16 @@ class Wallet extends Model
     protected $fillable = [
         'wallet_type_id',
         'user_id',
-        'balance', 
+        'balance',
     ];
-} 
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function walletType()
+    {
+        return $this->belongsTo(WalletType::class);
+    }
+}

@@ -50,7 +50,6 @@ class WalletController extends Controller
                 "message" => "Fund the wallet with at least " . $walletType->minimum_balance,
             ],StatusCodes::BAD_REQUEST);
         }
-
         $wallet = Wallet::create($validatedData);
 
         return response()->json([
