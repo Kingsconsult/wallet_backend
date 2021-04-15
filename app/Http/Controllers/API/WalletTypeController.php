@@ -81,7 +81,7 @@ class WalletTypeController extends Controller
         return response()->json([
             "status" => "success",
             "status_code" => StatusCodes::CREATED,
-            "message" => "Wallet Type added successful",
+            "message" => "Wallet Type updated successful",
             "data" => $walletType
         ],StatusCodes::CREATED);
     }
@@ -94,6 +94,13 @@ class WalletTypeController extends Controller
      */
     public function destroy(WalletType $walletType)
     {
-        //
+        $walletType->delete();
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::SUCCESS,
+            "message" => "Wallet Type deleted successful",
+            "data" => $walletType
+        ],StatusCodes::SUCCESS);
     }
 }
