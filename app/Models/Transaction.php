@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Wallet extends Model
+class Transaction extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'wallet_type_id',
-        'user_id',
-        'balance', 
+        'amount', 
+        'transaction_type', 
+        'debit_wallet_id',
+        'credit_wallet_id', 
     ];
-} 
+}
