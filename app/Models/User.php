@@ -21,7 +21,7 @@ class User extends Authenticatable
         'first_name',
         'last_name',
         'email',
-        'password', 
+        'password',
     ];
 
     /**
@@ -43,8 +43,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function wallet(){
+    public function wallets()
+    {
         return $this->hasMany(wallet::class);
     }
 
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
