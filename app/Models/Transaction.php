@@ -15,4 +15,15 @@ class Transaction extends Model
         'debit_wallet_id',
         'credit_wallet_id', 
     ];
+
+    
+    public function wallet()
+    {
+        return $this->belongsTo(Wallet::class);
+    }
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
