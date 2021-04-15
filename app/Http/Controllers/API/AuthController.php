@@ -53,40 +53,4 @@ class AuthController extends Controller
 
         return response(['user' => auth()->user(), 'access_token' => $accessToken]);
     }
-
-    public function allUsers()
-    {
-        $allUsers = User::all();
-
-        
-        return response()->json([
-            "status" => "success",
-            "message" => "All Wallets fetched successfully.",
-            "data" => $allUsers->load(['wallet', 'transaction'])
-        ], StatusCodes::SUCCESS);
-    }
-
-    public function user($id)
-    {
-        $user = User::find($id);
-
-        if(!isset($user)){
-            return response()->json([
-                "status" => "failure",
-                "status_code" => StatusCodes::NOT_FOUND,
-                "message" => "User not found",
-            ],StatusCodes::NOT_FOUND);
-        }
-
-
-        // $wallets = Wallet::find($user->id);
-
-        return response()->json([
-            "status" => "success",
-            "status_code" => StatusCodes::SUCCESS,
-            "message" => "Wallet fetched successfully.",
-            "data" => $user->load(['wallets', 'transactions'])
-        ], StatusCodes::SUCCESS);
-
-    }
 }
