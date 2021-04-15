@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Collections\StatusCodes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateWalletRequest;
+use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletType;
@@ -21,6 +22,9 @@ class WalletController extends Controller
     {
         $wallets = Wallet::all();
         
+        // "data" => $user->load(['wallets', 'transactions'])
+
+        // $transactions = 
 
         return response()->json([
             "status" => "success",
@@ -79,11 +83,22 @@ class WalletController extends Controller
             ],StatusCodes::NOT_FOUND);
         }
 
+        $transactions = Transaction::where([['debit_wallet_id', $wallet->id],['credit_wallet_id', $wallet->id]])->get();
+
+        $walletType = WalletType::find($wallet->wallet_type_id);
+
+        $owner = User::find($wallet->user_id);
+
         return response()->json([
             "status" => "success",
             "status_code" => StatusCodes::SUCCESS,
             "message" => "Wallet fetched successfully.",
-            "data" => $wallet->load(['user', 'walletType'])
+            "data" => [
+                "owner" => $owner->first_name . ' ' . $owner->last_name,
+                "wallet-type" => $walletType->wallet_type,
+                "detail" => $wallet->load(['walletType'])
+            ],
+            "transactions" => $transactions
         ], StatusCodes::SUCCESS);
     }
 
