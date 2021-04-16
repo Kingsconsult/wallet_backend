@@ -28,7 +28,6 @@ Route::post('register', [AuthController::class, 'register'])->name('register');
 Route::post('login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => ['auth:api']], function () {
-    
 
     Route::get('all-users', [UserController::class, 'allUsers']);
     Route::get('user/{id}', [UserController::class, 'user']);
@@ -37,7 +36,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::prefix('wallets')->group(function () {
         Route::get('counts', [WalletController::class, 'counts']);
         Route::get('balance/{id}', [WalletController::class, 'walletBalance']);
-        Route::post('fund-wallet/{id}', [WalletController::class, 'fundWallet']);
+        Route::post('fund-wallet', [WalletController::class, 'fundWallet']);
+        Route::post('fund-transfer', [WalletController::class, 'walletTransfer']);
     });
 
 

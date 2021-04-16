@@ -6,6 +6,7 @@ use App\Collections\StatusCodes;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateWalletRequest;
 use App\Http\Requests\FundWalletRequest;
+use App\Http\Requests\TransferFundRequest;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
@@ -89,16 +90,15 @@ class WalletController extends Controller
             return $wallet;
         });
 
-        if($walletTransactions != null) {
-            
+        if ($walletTransactions != null) {
+
             return response()->json([
                 "status" => "success",
                 "status_code" => StatusCodes::CREATED,
                 "message" => "Wallet created successful",
-                "wallet" => $walletTransactions->load(['user', 'walletType'])            
+                "wallet" => $walletTransactions->load(['user', 'walletType'])
             ], StatusCodes::CREATED);
         }
-
     }
 
     /**
@@ -111,6 +111,16 @@ class WalletController extends Controller
     {
 
         $wallet = Wallet::find($id);
+
+        $authUserId = Auth::id();
+
+        if (!$authUserId) {
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::BAD_REQUEST,
+                "message" => "Please Login before creating your wallet",
+            ], StatusCodes::BAD_REQUEST);
+        }
 
         if (!isset($wallet)) {
             return response()->json([
@@ -224,11 +234,14 @@ class WalletController extends Controller
         ], StatusCodes::SUCCESS);
     }
 
-    public function fundWallet(FundWalletRequest $request, $id)
+    public function fundWallet(FundWalletRequest $request)
     {
-        $wallet = Wallet::find($id);
-
+        
         $authUserId = Auth::id();
+        
+        $validatedData = $request->validated();
+        
+        $wallet = Wallet::find($validatedData["walletId"]);
 
         if (!isset($wallet)) {
             return response()->json([
@@ -238,13 +251,10 @@ class WalletController extends Controller
             ], StatusCodes::NOT_FOUND);
         }
 
-        $validatedData = $request->validated();
-
-
         $walletTransactions = DB::transaction(function ()  use ($validatedData, $authUserId, $wallet) {
 
-            $wallet->update([ 
-                "balance" => $wallet->balance + $validatedData['amount'], 
+            $wallet->update([
+                "balance" => $wallet->balance + $validatedData['amount'],
             ]);
 
             Transaction::create(
@@ -259,14 +269,106 @@ class WalletController extends Controller
             return $wallet;
         });
 
-        if($walletTransactions != null) {
-            
+        if ($walletTransactions != null) {
             return response()->json([
                 "status" => "success",
                 "status_code" => StatusCodes::CREATED,
                 "message" => "Wallet Funded successful",
-                "wallet" => $walletTransactions->load(['user', 'walletType'])            
+                "wallet" => $walletTransactions->load(['user', 'walletType'])
             ], StatusCodes::CREATED);
         }
+    }
+
+
+    public function walletTransfer(TransferFundRequest $request)
+    {
+
+        $validatedData = $request->validated();
+
+        $Debitwallet = Wallet::find($validatedData["debit_wallet_id"]);
+
+        $creditWallet = Wallet::find($validatedData["credit_wallet_id"]);
+
+        $authUserId = Auth::id();
+
+        if (!isset($Debitwallet)) {
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::NOT_FOUND,
+                "message" => "Wallet to debit not found",
+            ], StatusCodes::NOT_FOUND);
+        }
+
+        if ($Debitwallet->balance < $validatedData["amount"]) {
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::BAD_REQUEST,
+                "message" => "No enough fund in the wallet to transfer",
+                "data" => [
+                    "wallet remaining balance" => $Debitwallet->balance,
+                    "Amount to transfer" => $validatedData["amount"]
+                ]
+            ], StatusCodes::BAD_REQUEST);
+        }
+
+        if (!isset($creditWallet)) {
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::NOT_FOUND,
+                "message" => "Wallet to credit not found",
+            ], StatusCodes::NOT_FOUND);
+        }
+
+
+
+        $walletType = WalletType::find($Debitwallet->wallet_type_id);
+
+        $walletRemainingBalance = $Debitwallet->balance - $validatedData["amount"];
+
+        if ($walletType->minimum_balance > $walletRemainingBalance) {
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::BAD_REQUEST,
+                "message" => "The minimum balance for your wallet will be " . $walletType->minimum_balance,
+                "data" => [
+                    "wallet type minimum balance" => $walletType->minimum_balance,
+                    "wallet balance after transfer" => $walletRemainingBalance
+                ]
+            ], StatusCodes::BAD_REQUEST);
+        }
+
+        $walletTransactions = DB::transaction(function ()  use ($validatedData, $authUserId, $Debitwallet, $creditWallet) {
+
+            $Debitwallet->update([
+                "balance" => $Debitwallet->balance - $validatedData['amount'],
+            ]);
+
+            $creditWallet->update([
+                "balance" => $creditWallet->balance + $validatedData['amount'],
+            ]);
+
+            $transaction = Transaction::create(
+                [
+                    "amount" => $validatedData['amount'],
+                    "user_id" => $authUserId,
+                    "transaction_type" => "CR",
+                    "credit_wallet_id" => $validatedData["credit_wallet_id"],
+                    "debit_wallet_id" => $validatedData["debit_wallet_id"],
+                ]
+            );
+
+            return $transaction;
+        });
+
+        return response()->json([
+            "status" => "success",
+            "status_code" => StatusCodes::CREATED,
+            "message" => "Wallet Funded successful",
+            "transaction" => [
+                "Debit Wallet" => $Debitwallet->load('walletType'),
+                "Credit Wallet" => $creditWallet->load('walletType'),
+                "details" => $walletTransactions
+            ]            
+        ], StatusCodes::CREATED);
     }
 }
