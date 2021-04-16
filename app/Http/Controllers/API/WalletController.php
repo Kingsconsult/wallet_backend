@@ -26,8 +26,6 @@ class WalletController extends Controller
     {
         $wallets = Wallet::all();
 
-        // "data" => $user->load(['wallets', 'transactions'])
-
         return response()->json([
             "status" => "success",
             "message" => "All Wallets fetched successfully.",

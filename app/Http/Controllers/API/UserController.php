@@ -87,10 +87,6 @@ class UserController extends Controller
                 "message" => "User not found",
             ],StatusCodes::NOT_FOUND);
         }
-
-
-        // $wallets = Wallet::find($user->id);
-
         return response()->json([
             "status" => "success",
             "status_code" => StatusCodes::SUCCESS,

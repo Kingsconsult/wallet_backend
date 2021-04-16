@@ -13,8 +13,4 @@ class StateLga extends Model
         'states', 
         'lgas'
     ];
-
-    // protected $casts = [
-    //     'lgas' => 'array',
-    // ];
 }
