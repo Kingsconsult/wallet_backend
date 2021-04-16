@@ -15,23 +15,6 @@ class StateLgaImport implements ToModel, WithHeadingRow
     */
     public function model(array $row)
     {
-
-        // $states = $row['state'];
-        // $lgas = $row['lga'];
-
-        // dd($lgas);
-
-
-
-
-
-
-
-
-
-
-
-
         return new StateLga([
             'lgas'     => $row['lga'],
             'states'    => $row['state'] 

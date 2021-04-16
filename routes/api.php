@@ -24,17 +24,21 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+// Register in the app
 Route::post('register', [AuthController::class, 'register'])->name('register');
+// Login to the app
 Route::post('login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => ['auth:api']], function () {
-
+    // Get all users 
     Route::get('all-users', [UserController::class, 'allUsers']);
+    // Get a user's details
     Route::get('user/{id}', [UserController::class, 'user']);
+    // Get the total number of users of the app
     Route::get('count-users', [UserController::class, 'countUsers']);
 
     Route::prefix('wallets')->group(function () {
+        
         Route::get('counts', [WalletController::class, 'counts']);
         Route::get('balance/{id}', [WalletController::class, 'walletBalance']);
         Route::post('fund-wallet', [WalletController::class, 'fundWallet']);
