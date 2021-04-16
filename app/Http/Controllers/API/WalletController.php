@@ -158,14 +158,7 @@ class WalletController extends Controller
      */
     public function update(Request $request, Wallet $wallet)
     {
-        // $walletType->update($request->all());
-
-        // return response()->json([
-        //     "status" => "success",
-        //     "status_code" => StatusCodes::CREATED,
-        //     "message" => "Wallet Type updated successful",
-        //     "data" => $walletType
-        // ],StatusCodes::CREATED);
+        //
     }
 
     /**
@@ -236,11 +229,11 @@ class WalletController extends Controller
 
     public function fundWallet(FundWalletRequest $request)
     {
-        
+
         $authUserId = Auth::id();
-        
+
         $validatedData = $request->validated();
-        
+
         $wallet = Wallet::find($validatedData["walletId"]);
 
         if (!isset($wallet)) {
@@ -276,6 +269,12 @@ class WalletController extends Controller
                 "message" => "Wallet Funded successful",
                 "wallet" => $walletTransactions->load(['user', 'walletType'])
             ], StatusCodes::CREATED);
+        } else {
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::BAD_REQUEST,
+                "message" => "Transactio not successful",
+            ], StatusCodes::BAD_REQUEST);
         }
     }
 
@@ -319,8 +318,6 @@ class WalletController extends Controller
             ], StatusCodes::NOT_FOUND);
         }
 
-
-
         $walletType = WalletType::find($Debitwallet->wallet_type_id);
 
         $walletRemainingBalance = $Debitwallet->balance - $validatedData["amount"];
@@ -336,6 +333,8 @@ class WalletController extends Controller
                 ]
             ], StatusCodes::BAD_REQUEST);
         }
+
+        $walletTransactions = null;
 
         $walletTransactions = DB::transaction(function ()  use ($validatedData, $authUserId, $Debitwallet, $creditWallet) {
 
@@ -360,15 +359,24 @@ class WalletController extends Controller
             return $transaction;
         });
 
-        return response()->json([
-            "status" => "success",
-            "status_code" => StatusCodes::CREATED,
-            "message" => "Wallet Funded successful",
-            "transaction" => [
-                "Debit Wallet" => $Debitwallet->load('walletType'),
-                "Credit Wallet" => $creditWallet->load('walletType'),
-                "details" => $walletTransactions
-            ]            
-        ], StatusCodes::CREATED);
+        if ($walletTransactions != null) {
+
+            return response()->json([
+                "status" => "success",
+                "status_code" => StatusCodes::CREATED,
+                "message" => "Wallet Funded successful",
+                "transaction" => [
+                    "Debit Wallet" => $Debitwallet->load('walletType'),
+                    "Credit Wallet" => $creditWallet->load('walletType'),
+                    "details" => $walletTransactions
+                ]
+            ], StatusCodes::CREATED);
+        } else {
+            return response()->json([
+                "status" => "failure",
+                "status_code" => StatusCodes::BAD_REQUEST,
+                "message" => "Transactio not successful",
+            ], StatusCodes::BAD_REQUEST);
+        }
     }
 }
