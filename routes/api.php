@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\StateLgaController;
 use App\Http\Controllers\API\TransactionController;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\WalletController;
@@ -40,6 +41,7 @@ Route::group(['middleware' => ['auth:api']], function () {
         Route::post('fund-transfer', [WalletController::class, 'walletTransfer']);
     });
 
+    Route::post('import-excel', [StateLgaController::class, 'importStateLga']);
 
 
     Route::apiResource('wallet-types', WalletTypeController::class);
@@ -47,3 +49,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::apiResource('transactions', TransactionController::class);
     // Route::apiResource('transactions', WalletController::class);
 });
+
+
+// Route::post('projects/importProject', [ProjectController::class, 'importProject'])->name('importProject');
